@@ -37,4 +37,15 @@ public class RaceEventService {
 
         return raceEventMapper.toResponse(event);
     }
+
+    public RaceEventResponse update(Long id, RaceEventRequest request) {
+        RaceEvent eventToUpdate = raceEventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Race event not found for ID: " + id));
+
+        raceEventMapper.updateEntityFromRequest(request,eventToUpdate);
+
+        RaceEvent updatedEvent = raceEventRepository.save(eventToUpdate);
+
+        return raceEventMapper.toResponse(updatedEvent);
+    }
 }
