@@ -49,4 +49,12 @@ public class RaceEventController {
         RaceEventResponse response = raceEventService.update(id, request);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        raceEventService.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }
