@@ -17,21 +17,11 @@ public class RaceEventService {
     private final RaceEventMapper raceEventMapper;
 
     public RaceEventResponse create(RaceEventRequest request) {
-        RaceEvent newRaceEvent = new RaceEvent();
-        newRaceEvent.setName(request.name());
-        newRaceEvent.setEventDate(request.eventDate());
-        newRaceEvent.setLocation(request.location());
-        newRaceEvent.setDistanceInKm(request.distanceInKm());
+        RaceEvent newRaceEvent = raceEventMapper.toEntity(request);
 
         RaceEvent savedRaceEvent = raceEventRepository.save(newRaceEvent);
 
-        return new RaceEventResponse(
-                savedRaceEvent.getId(),
-                savedRaceEvent.getName(),
-                savedRaceEvent.getEventDate(),
-                savedRaceEvent.getLocation(),
-                savedRaceEvent.getDistanceInKm()
-        );
+        return raceEventMapper.toResponse(savedRaceEvent);
     }
 
     public List<RaceEventResponse> findAll() {
