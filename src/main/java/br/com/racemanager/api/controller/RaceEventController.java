@@ -37,4 +37,10 @@ public class RaceEventController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RaceEventResponse> findById(@PathVariable Long id) {
+        RaceEventResponse response = raceEventService.findById(id);
+        return ResponseEntity.ok(response);
+    }
 }
