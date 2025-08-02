@@ -29,4 +29,11 @@ public class RaceEventService {
 
         return raceEventMapper.toResponse(events);
     }
+
+    public RaceEventResponse findById(Long id) {
+        RaceEvent event = raceEventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Race event not found for ID: " + id));
+
+        return raceEventMapper.toResponse(event);
+    }
 }
