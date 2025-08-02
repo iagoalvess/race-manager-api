@@ -2,6 +2,7 @@ package br.com.racemanager.api.service;
 
 import br.com.racemanager.api.dto.RaceEventRequest;
 import br.com.racemanager.api.dto.RaceEventResponse;
+import br.com.racemanager.api.exception.ResourceNotFoundException;
 import br.com.racemanager.api.mapper.RaceEventMapper;
 import br.com.racemanager.api.model.RaceEvent;
 import br.com.racemanager.api.repository.RaceEventRepository;
@@ -32,7 +33,7 @@ public class RaceEventService {
 
     public RaceEventResponse findById(Long id) {
         RaceEvent event = raceEventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Race event not found for ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Race event not found for ID: " + id));
 
         return raceEventMapper.toResponse(event);
     }
