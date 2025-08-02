@@ -43,4 +43,10 @@ public class RaceEventController {
         RaceEventResponse response = raceEventService.findById(id);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RaceEventResponse> update(@PathVariable Long id, @RequestBody @Valid RaceEventRequest request) {
+        RaceEventResponse response = raceEventService.update(id, request);
+        return ResponseEntity.ok(response);
+    }
 }
