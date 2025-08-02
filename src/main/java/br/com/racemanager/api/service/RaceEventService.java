@@ -48,4 +48,11 @@ public class RaceEventService {
 
         return raceEventMapper.toResponse(updatedEvent);
     }
+
+    public void delete(Long id) {
+        raceEventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Race event not found for ID: " + id));
+
+        raceEventRepository.deleteById(id);
+    }
 }
