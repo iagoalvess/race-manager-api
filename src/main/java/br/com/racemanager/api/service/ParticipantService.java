@@ -60,6 +60,16 @@ public class ParticipantService {
         return participantMapper.toResponse(participant);
     }
 
+    public void delete(Long raceId, Long participantId) {
+        Participant participantToDelete = participantRepository.findById(participantId).orElseThrow(() -> new ResourceNotFoundException("Participant not found for id: " + participantId));
+
+        if (!participantToDelete.getRaceEvent().getId().equals(raceId)) {
+            throw new ResourceNotFoundException("Participant does not belong to the specified race event.");
+        }
+
+        participantRepository.delete(participantToDelete);
+    }
+
     private String generateNextBibNumber(Long raceId) {
         return participantRepository.findTopByRaceEventIdOrderByBibNumberDesc(raceId).map(lastParticipant -> {
             int lastBib = Integer.parseInt(lastParticipant.getBibNumber());

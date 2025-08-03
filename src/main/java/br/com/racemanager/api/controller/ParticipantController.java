@@ -34,9 +34,16 @@ public class ParticipantController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("{participantId}")
+    @GetMapping("/{participantId}")
     public ResponseEntity<ParticipantResponse> findById(@PathVariable Long raceId, @PathVariable Long participantId) {
         ParticipantResponse response = participantService.findByRaceIdAndParticipantId(raceId, participantId);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{participantId}")
+    public ResponseEntity<Void> delete(@PathVariable Long raceId, @PathVariable Long participantId) {
+
+        participantService.delete(raceId, participantId);
+        return ResponseEntity.noContent().build();
     }
 }
