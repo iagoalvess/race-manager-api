@@ -30,6 +30,10 @@ public class RaceEvent {
 
     private LocalTime startTime;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organizer_id", nullable = false)
+    private Organizer organizer;
+
     @OneToMany(mappedBy = "raceEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories = new ArrayList<>();
 
