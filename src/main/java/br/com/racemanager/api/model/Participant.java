@@ -20,7 +20,7 @@ public class Participant {
     private Long id;
 
     private String fullName;
-    private String bigNumber;
+    private String bibNumber;
     private LocalDate birthDate;
     private String gender;
 
