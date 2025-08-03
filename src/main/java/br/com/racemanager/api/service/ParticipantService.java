@@ -2,6 +2,7 @@ package br.com.racemanager.api.service;
 
 import br.com.racemanager.api.dto.ParticipantRequest;
 import br.com.racemanager.api.dto.ParticipantResponse;
+import br.com.racemanager.api.exception.BusinessException;
 import br.com.racemanager.api.exception.ResourceNotFoundException;
 import br.com.racemanager.api.mapper.ParticipantMapper;
 import br.com.racemanager.api.model.Category;
@@ -25,6 +26,10 @@ public class ParticipantService {
     private final ParticipantMapper participantMapper;
 
     public ParticipantResponse create(Long raceId, ParticipantRequest request) {
+        if (participantRepository.existsByCpf(request.cpf())) {
+            throw new BusinessException("CPF already registered in the system.");
+        }
+
         RaceEvent raceEvent = raceEventRepository.findById(raceId).orElseThrow(() -> new ResourceNotFoundException("Race not found for id: " + raceId));
 
         int age = Period.between(request.birthDate(), raceEvent.getEventDate()).getYears();

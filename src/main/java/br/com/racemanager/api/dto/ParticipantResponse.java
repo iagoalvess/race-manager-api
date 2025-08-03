@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public record ParticipantResponse(
         Long id,
         String fullName,
+        String cpf,
         String bibNumber,
         String gender,
         LocalDate birthDate,

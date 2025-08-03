@@ -12,4 +12,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     Optional<Participant> findTopByRaceEventIdOrderByBibNumberDesc(Long raceEventId);
 
     List<Participant> findByRaceEventId(Long raceEventId);
+
+    boolean existsByCpf(String cpf);
 }

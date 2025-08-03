@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "participants", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"bibNumber", "race_event_id"})
-})
+@Table(name = "participants", uniqueConstraints = {@UniqueConstraint(columnNames = {"bibNumber", "race_event_id"})})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,6 +18,8 @@ public class Participant {
     private Long id;
 
     private String fullName;
+    @Column(unique = true, nullable = false)
+    private String cpf;
     private String bibNumber;
     private LocalDate birthDate;
     private String gender;

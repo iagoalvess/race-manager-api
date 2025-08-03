@@ -10,6 +10,9 @@ public record ParticipantRequest(
         @NotBlank(message = "The name cannot be blank.")
         String fullName,
 
+        @NotBlank(message = "The cpf cannot be blank.")
+        String cpf,
+
         @NotNull(message = "The gender cannot be null")
         String gender,
 
