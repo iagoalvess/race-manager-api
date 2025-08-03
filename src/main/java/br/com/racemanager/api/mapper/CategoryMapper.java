@@ -5,6 +5,7 @@ import br.com.racemanager.api.dto.CategoryResponse;
 import br.com.racemanager.api.model.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface CategoryMapper {
     Category toEntity(CategoryRequest request);
 
     List<CategoryResponse> toResponse(List<Category> categories);
+
+    void updateEntityFromRequest(CategoryRequest request, @MappingTarget Category category);
 }

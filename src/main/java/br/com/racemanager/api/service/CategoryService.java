@@ -38,4 +38,21 @@ public class CategoryService {
         List<Category> categories = categoryRepository.findByRaceEventId(raceId);
         return categoryMapper.toResponse(categories);
     }
+
+    public CategoryResponse update(Long raceId, Long categoryId, CategoryRequest request) {
+        raceEventRepository.findById(raceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Race not found for id: " + raceId));
+
+        Category categoryToUpdate = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found for id: " + categoryId));
+
+        if (!categoryToUpdate.getRaceEvent().getId().equals(raceId)) {
+            throw new ResourceNotFoundException("The specified category is not associated with this race.");
+        }
+
+        categoryMapper.updateEntityFromRequest(request, categoryToUpdate);
+        Category updatedCategory = categoryRepository.save(categoryToUpdate);
+
+        return categoryMapper.toResponse(updatedCategory);
+    }
 }

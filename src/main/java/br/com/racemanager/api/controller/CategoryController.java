@@ -39,4 +39,14 @@ public class CategoryController {
         List<CategoryResponse> response = categoryService.findAllByRaceId(raceId);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponse> update(
+            @PathVariable Long raceId,
+            @PathVariable Long categoryId,
+            @RequestBody @Valid CategoryRequest request) {
+
+        CategoryResponse response = categoryService.update(raceId, categoryId, request);
+        return ResponseEntity.ok(response);
+    }
 }
