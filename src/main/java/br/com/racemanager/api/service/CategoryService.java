@@ -55,4 +55,19 @@ public class CategoryService {
 
         return categoryMapper.toResponse(updatedCategory);
     }
+
+    public void delete(Long raceId, Long categoryId) {
+        if (!raceEventRepository.existsById(raceId)) {
+            throw new ResourceNotFoundException("Race not found for id: " + raceId);
+        }
+
+        Category categoryToDelete = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found for id: " + categoryId));
+
+        if (!categoryToDelete.getRaceEvent().getId().equals(raceId)) {
+            throw new ResourceNotFoundException("The specified category is not associated with this race.");
+        }
+
+        categoryRepository.delete(categoryToDelete);
+    }
 }
