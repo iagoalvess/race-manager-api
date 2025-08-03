@@ -13,14 +13,16 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/races")
+@RequestMapping("/api/organizers/{organizerId}/races")
 @RequiredArgsConstructor
 public class RaceEventController {
     private final RaceEventService raceEventService;
 
     @PostMapping
-    public ResponseEntity<RaceEventResponse> create(@RequestBody @Valid RaceEventRequest request) {
-        RaceEventResponse response = raceEventService.create(request);
+    public ResponseEntity<RaceEventResponse> create(
+            @PathVariable Long organizerId,
+            @RequestBody @Valid RaceEventRequest request) {
+        RaceEventResponse response = raceEventService.create(organizerId, request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
