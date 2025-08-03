@@ -21,8 +21,7 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
 
     public CategoryResponse create(Long raceId, CategoryRequest request) {
-        RaceEvent raceEvent = raceEventRepository.findById(raceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Race not found for id: " + raceId));
+        RaceEvent raceEvent = raceEventRepository.findById(raceId).orElseThrow(() -> new ResourceNotFoundException("Race not found for id: " + raceId));
 
         Category newCategory = categoryMapper.toEntity(request);
         newCategory.setRaceEvent(raceEvent);
@@ -40,11 +39,9 @@ public class CategoryService {
     }
 
     public CategoryResponse update(Long raceId, Long categoryId, CategoryRequest request) {
-        raceEventRepository.findById(raceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Race not found for id: " + raceId));
+        raceEventRepository.findById(raceId).orElseThrow(() -> new ResourceNotFoundException("Race not found for id: " + raceId));
 
-        Category categoryToUpdate = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found for id: " + categoryId));
+        Category categoryToUpdate = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found for id: " + categoryId));
 
         if (!categoryToUpdate.getRaceEvent().getId().equals(raceId)) {
             throw new ResourceNotFoundException("The specified category is not associated with this race.");
@@ -61,8 +58,7 @@ public class CategoryService {
             throw new ResourceNotFoundException("Race not found for id: " + raceId);
         }
 
-        Category categoryToDelete = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found for id: " + categoryId));
+        Category categoryToDelete = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found for id: " + categoryId));
 
         if (!categoryToDelete.getRaceEvent().getId().equals(raceId)) {
             throw new ResourceNotFoundException("The specified category is not associated with this race.");
