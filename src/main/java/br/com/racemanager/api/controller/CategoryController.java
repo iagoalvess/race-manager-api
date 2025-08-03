@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/races/{raceId}/categories")
@@ -31,5 +32,11 @@ public class CategoryController {
                 .toUri();
 
         return ResponseEntity.created(location).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CategoryResponse>> findAllByRaceId(@PathVariable Long raceId) {
+        List<CategoryResponse> response = categoryService.findAllByRaceId(raceId);
+        return ResponseEntity.ok(response);
     }
 }

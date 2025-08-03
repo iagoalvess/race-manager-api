@@ -6,10 +6,14 @@ import br.com.racemanager.api.model.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
     @Mapping(source = "raceEvent.id", target = "raceEventId")
     CategoryResponse toResponse(Category category);
 
     Category toEntity(CategoryRequest request);
+
+    List<CategoryResponse> toResponse(List<Category> categories);
 }

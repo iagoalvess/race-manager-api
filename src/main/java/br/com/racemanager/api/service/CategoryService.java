@@ -11,6 +11,8 @@ import br.com.racemanager.api.repository.RaceEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -27,5 +29,13 @@ public class CategoryService {
 
         Category savedCategory = categoryRepository.save(newCategory);
         return categoryMapper.toResponse(savedCategory);
+    }
+
+    public List<CategoryResponse> findAllByRaceId(Long raceId) {
+        if (!raceEventRepository.existsById(raceId)) {
+            throw new ResourceNotFoundException("Race not found for id: " + raceId);
+        }
+        List<Category> categories = categoryRepository.findByRaceEventId(raceId);
+        return categoryMapper.toResponse(categories);
     }
 }
