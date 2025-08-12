@@ -3,47 +3,70 @@ package br.com.racemanager.api.controller;
 import br.com.racemanager.api.dto.ParticipantRequest;
 import br.com.racemanager.api.dto.ParticipantResponse;
 import br.com.racemanager.api.service.ParticipantService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/races/{raceId}/participants")
+@RequestMapping("/race-events/{raceEventId}/participants")
 @RequiredArgsConstructor
+@Tag(name = "Participants", description = "Endpoints for managing participants")
 public class ParticipantController {
     private final ParticipantService participantService;
 
     @PostMapping
-    public ResponseEntity<ParticipantResponse> create(@PathVariable Long raceId, @RequestBody @Valid ParticipantRequest request) {
+    @PreAuthorize("hasRole('ORGANIZER')")
+    @Operation(summary = "Register participant", description = "Registers a new participant in the race")
+    public ResponseEntity<ParticipantResponse> create(
+            @Parameter(description = "Race event ID") @PathVariable Long raceEventId, 
+            @Valid @RequestBody ParticipantRequest request) {
+        ParticipantResponse response = participantService.create(raceEventId, request);
 
-        ParticipantResponse response = participantService.create(raceId, request);
-
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/races/{raceId}/participants/{participantId}").buildAndExpand(raceId, response.id()).toUri();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{participantId}")
+                .buildAndExpand(response.getId())
+                .toUri();
 
         return ResponseEntity.created(location).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<ParticipantResponse>> findAllByRaceId(@PathVariable Long raceId) {
-        List<ParticipantResponse> response = participantService.findAllByRaceId(raceId);
+    @Operation(summary = "List participants", description = "Lists all participants of the race with pagination")
+    public ResponseEntity<Page<ParticipantResponse>> findAllByRaceId(
+            @Parameter(description = "Race event ID") @PathVariable Long raceEventId,
+            @PageableDefault(size = 20, sort = "bibNumber") Pageable pageable) {
+        Page<ParticipantResponse> response = participantService.findAllByRaceId(raceEventId, pageable);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{participantId}")
-    public ResponseEntity<ParticipantResponse> findById(@PathVariable Long raceId, @PathVariable Long participantId) {
-        ParticipantResponse response = participantService.findByRaceIdAndParticipantId(raceId, participantId);
+    @Operation(summary = "Get participant", description = "Returns a specific participant")
+    public ResponseEntity<ParticipantResponse> findById(
+            @Parameter(description = "Race event ID") @PathVariable Long raceEventId, 
+            @Parameter(description = "Participant ID") @PathVariable Long participantId) {
+        ParticipantResponse response = participantService.findByRaceIdAndParticipantId(raceEventId, participantId);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{participantId}")
-    public ResponseEntity<Void> delete(@PathVariable Long raceId, @PathVariable Long participantId) {
-
-        participantService.delete(raceId, participantId);
+    @PreAuthorize("hasRole('ORGANIZER')")
+    @Operation(summary = "Delete participant", description = "Removes a participant from the race")
+    public ResponseEntity<Void> delete(
+            @Parameter(description = "Race event ID") @PathVariable Long raceEventId, 
+            @Parameter(description = "Participant ID") @PathVariable Long participantId) {
+        participantService.delete(raceEventId, participantId);
         return ResponseEntity.noContent().build();
     }
 }

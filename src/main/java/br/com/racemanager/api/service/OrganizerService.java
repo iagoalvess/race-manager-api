@@ -21,7 +21,7 @@ public class OrganizerService {
     private final OrganizerMapper organizerMapper;
 
     public OrganizerResponse create(OrganizerRequest request) {
-        if (organizerRepository.existsByEmail(request.email())) {
+        if (organizerRepository.existsByEmail(request.getEmail())) {
             throw new BusinessException("Email already exists");
         }
 
@@ -36,14 +36,14 @@ public class OrganizerService {
     }
 
     public OrganizerResponse findById(Long id) {
-        Organizer organizer = organizerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Organizer not found for id: " + id));
+        Organizer organizer = organizerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Organizer not found for ID: " + id));
 
         return organizerMapper.toResponse(organizer);
     }
 
     public void delete(Long id) {
         if (!organizerRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Organizer not found for id: " + id);
+            throw new ResourceNotFoundException("Organizer not found for ID: " + id);
         }
 
         organizerRepository.deleteById(id);

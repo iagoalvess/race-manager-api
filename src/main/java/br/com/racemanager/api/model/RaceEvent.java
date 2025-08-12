@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,13 @@ public class RaceEvent {
 
     private LocalTime startTime;
 
+    @Column(name = "actual_start_time")
+    private LocalDateTime actualStartTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private RaceStatus status = RaceStatus.SCHEDULED;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organizer_id", nullable = false)
     private Organizer organizer;
@@ -39,4 +47,28 @@ public class RaceEvent {
 
     @OneToMany(mappedBy = "raceEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participant> participants = new ArrayList<>();
+
+    @OneToMany(mappedBy = "raceEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RaceResult> results = new ArrayList<>();
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    public enum RaceStatus {
+        SCHEDULED, STARTED, FINISHED, CANCELLED
+    }
 }

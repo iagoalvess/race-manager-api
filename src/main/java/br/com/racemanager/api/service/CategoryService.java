@@ -20,8 +20,8 @@ public class CategoryService {
     private final RaceEventRepository raceEventRepository;
     private final CategoryMapper categoryMapper;
 
-    public CategoryResponse create(Long raceId, CategoryRequest request) {
-        RaceEvent raceEvent = raceEventRepository.findById(raceId).orElseThrow(() -> new ResourceNotFoundException("Race not found for id: " + raceId));
+    public CategoryResponse create(Long raceEventId, CategoryRequest request) {
+        RaceEvent raceEvent = raceEventRepository.findById(raceEventId).orElseThrow(() -> new ResourceNotFoundException("Race event not found for ID: " + raceEventId));
 
         Category newCategory = categoryMapper.toEntity(request);
         newCategory.setRaceEvent(raceEvent);
@@ -30,21 +30,21 @@ public class CategoryService {
         return categoryMapper.toResponse(savedCategory);
     }
 
-    public List<CategoryResponse> findAllByRaceId(Long raceId) {
-        if (!raceEventRepository.existsById(raceId)) {
-            throw new ResourceNotFoundException("Race not found for id: " + raceId);
+    public List<CategoryResponse> findAllByRaceId(Long raceEventId) {
+        if (!raceEventRepository.existsById(raceEventId)) {
+            throw new ResourceNotFoundException("Race event not found for ID: " + raceEventId);
         }
-        List<Category> categories = categoryRepository.findByRaceEventId(raceId);
+        List<Category> categories = categoryRepository.findByRaceEventId(raceEventId);
         return categoryMapper.toResponse(categories);
     }
 
-    public CategoryResponse update(Long raceId, Long categoryId, CategoryRequest request) {
-        raceEventRepository.findById(raceId).orElseThrow(() -> new ResourceNotFoundException("Race not found for id: " + raceId));
+    public CategoryResponse update(Long raceEventId, Long categoryId, CategoryRequest request) {
+        raceEventRepository.findById(raceEventId).orElseThrow(() -> new ResourceNotFoundException("Race event not found for ID: " + raceEventId));
 
-        Category categoryToUpdate = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found for id: " + categoryId));
+        Category categoryToUpdate = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found for ID: " + categoryId));
 
-        if (!categoryToUpdate.getRaceEvent().getId().equals(raceId)) {
-            throw new ResourceNotFoundException("The specified category is not associated with this race.");
+        if (!categoryToUpdate.getRaceEvent().getId().equals(raceEventId)) {
+            throw new ResourceNotFoundException("The specified category is not associated with this race event.");
         }
 
         categoryMapper.updateEntityFromRequest(request, categoryToUpdate);
@@ -53,15 +53,15 @@ public class CategoryService {
         return categoryMapper.toResponse(updatedCategory);
     }
 
-    public void delete(Long raceId, Long categoryId) {
-        if (!raceEventRepository.existsById(raceId)) {
-            throw new ResourceNotFoundException("Race not found for id: " + raceId);
+    public void delete(Long raceEventId, Long categoryId) {
+        if (!raceEventRepository.existsById(raceEventId)) {
+            throw new ResourceNotFoundException("Race event not found for ID: " + raceEventId);
         }
 
-        Category categoryToDelete = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found for id: " + categoryId));
+        Category categoryToDelete = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found for ID: " + categoryId));
 
-        if (!categoryToDelete.getRaceEvent().getId().equals(raceId)) {
-            throw new ResourceNotFoundException("The specified category is not associated with this race.");
+        if (!categoryToDelete.getRaceEvent().getId().equals(raceEventId)) {
+            throw new ResourceNotFoundException("The specified category is not associated with this race event.");
         }
 
         categoryRepository.delete(categoryToDelete);

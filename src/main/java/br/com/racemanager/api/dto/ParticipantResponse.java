@@ -1,15 +1,23 @@
 package br.com.racemanager.api.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
-public record ParticipantResponse(
-        Long id,
-        String fullName,
-        String cpf,
-        String bibNumber,
-        String gender,
-        LocalDate birthDate,
-        String categoryName,
-        Long raceEventId
-) {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ParticipantResponse {
+    private Long id;
+    private String fullName;
+    private String cpf;
+    private String bibNumber;
+    private String gender;
+    private LocalDate birthDate;
+    private String categoryName;
+    private Long raceEventId;
 }

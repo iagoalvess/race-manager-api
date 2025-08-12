@@ -31,24 +31,24 @@ class RaceEventServiceTest {
 
     @Test
     void shouldCreateRaceEventSuccessfully() {
-        var request = new RaceEventRequest(
-                "Corrida Teste",
-                LocalDate.now().plusDays(10),
-                "Local Teste",
-                5.0
-        );
+        var request = RaceEventRequest.builder()
+                .name("Test Race")
+                .eventDate(LocalDate.now().plusDays(10))
+                .location("Test Location")
+                .distanceInKm(5.0)
+                .build();
 
         var raceEvent = new RaceEvent();
         var savedRaceEvent = new RaceEvent();
         savedRaceEvent.setId(1L);
 
-        var expectedResponse = new RaceEventResponse(
-                1L,
-                "Corrida Teste",
-                LocalDate.now().plusDays(10),
-                "Local Teste",
-                5.0
-        );
+        var expectedResponse = RaceEventResponse.builder()
+                .id(1L)
+                .name("Test Race")
+                .eventDate(LocalDate.now().plusDays(10))
+                .location("Test Location")
+                .distanceInKm(5.0)
+                .build();
 
         when(raceEventMapper.toEntity(any(RaceEventRequest.class))).thenReturn(raceEvent);
         when(raceEventRepository.save(any(RaceEvent.class))).thenReturn(savedRaceEvent);
@@ -57,7 +57,7 @@ class RaceEventServiceTest {
         RaceEventResponse actualResponse = raceEventService.create(request);
 
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.id()).isEqualTo(1L);
-        assertThat(actualResponse.name()).isEqualTo("Corrida Teste");
+        assertThat(actualResponse.getId()).isEqualTo(1L);
+        assertThat(actualResponse.getName()).isEqualTo("Test Race");
     }
 }

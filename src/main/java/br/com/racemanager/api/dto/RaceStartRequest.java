@@ -1,16 +1,12 @@
 package br.com.racemanager.api.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrganizerResponse {
-    private Long id;
-    private String name;
-    private String email;
+public class RaceStartRequest {
+    private String startTime;
 }

@@ -3,21 +3,29 @@ package br.com.racemanager.api.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-public record ParticipantRequest(
-        @NotBlank(message = "The name cannot be blank.")
-        String fullName,
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ParticipantRequest {
 
-        @NotBlank(message = "The cpf cannot be blank.")
-        String cpf,
+    @NotBlank(message = "Full name cannot be blank.")
+    private String fullName;
 
-        @NotNull(message = "The gender cannot be null")
-        String gender,
+    @NotBlank(message = "CPF cannot be blank.")
+    private String cpf;
 
-        @NotNull(message = "The birth date cannot be null")
-        @Past(message = "The birth date must be in the past")
-        LocalDate birthDate
-) {
+    @NotNull(message = "Gender cannot be null")
+    private String gender;
+
+    @NotNull(message = "Birth date cannot be null")
+    @Past(message = "Birth date must be in the past")
+    private LocalDate birthDate;
 }

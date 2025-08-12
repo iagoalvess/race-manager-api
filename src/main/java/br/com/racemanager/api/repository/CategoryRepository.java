@@ -11,8 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    List<Category> findByRaceEventId(Long raceId);
+    List<Category> findByRaceEventId(Long raceEventId);
 
-    @Query("SELECT c FROM Category c WHERE c.raceEvent.id = :raceId AND c.gender = :gender AND :age BETWEEN c.minAge AND c.maxAge")
-    Optional<Category> findCategoryForParticipant(Long raceId, int age, String gender);
+    @Query("SELECT c FROM Category c WHERE c.raceEvent.id = :raceEventId AND c.gender = :gender AND :age BETWEEN c.minAge AND c.maxAge")
+    Optional<Category> findCategoryForParticipant(Long raceEventId, int age, String gender);
 }

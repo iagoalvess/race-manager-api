@@ -3,23 +3,18 @@ package br.com.racemanager.api.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrganizerRequest {
-    
-    @NotBlank(message = "Name cannot be blank.")
-    private String name;
+public class AuthRequest {
 
-    @NotBlank(message = "Email cannot be blank.")
     @Email(message = "Email must be valid")
+    @NotBlank(message = "Email is required")
     private String email;
 
-    @NotBlank(message = "Password cannot be blank.")
+    @NotBlank(message = "Password is required")
     private String password;
 }

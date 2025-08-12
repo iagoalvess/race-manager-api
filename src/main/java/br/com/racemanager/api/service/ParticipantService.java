@@ -12,10 +12,13 @@ import br.com.racemanager.api.repository.CategoryRepository;
 import br.com.racemanager.api.repository.ParticipantRepository;
 import br.com.racemanager.api.repository.RaceEventRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Period;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,18 +28,21 @@ public class ParticipantService {
     private final RaceEventRepository raceEventRepository;
     private final ParticipantMapper participantMapper;
 
-    public ParticipantResponse create(Long raceId, ParticipantRequest request) {
-        if (participantRepository.existsByCpf(request.cpf())) {
+    @CacheEvict(value = "participants", allEntries = true)
+    public ParticipantResponse create(Long raceEventId, ParticipantRequest request) {
+        if (participantRepository.existsByCpf(request.getCpf())) {
             throw new BusinessException("CPF already registered in the system.");
         }
 
-        RaceEvent raceEvent = raceEventRepository.findById(raceId).orElseThrow(() -> new ResourceNotFoundException("Race not found for id: " + raceId));
+        RaceEvent raceEvent = raceEventRepository.findById(raceEventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Race event not found for ID: " + raceEventId));
 
-        int age = Period.between(request.birthDate(), raceEvent.getEventDate()).getYears();
+        int age = Period.between(request.getBirthDate(), raceEvent.getEventDate()).getYears();
 
-        Category category = categoryRepository.findCategoryForParticipant(raceId, age, request.gender()).orElseThrow(() -> new ResourceNotFoundException("No category found for age " + age + " and gender " + request.gender()));
+        Category category = categoryRepository.findCategoryForParticipant(raceEventId, age, request.getGender())
+                .orElseThrow(() -> new ResourceNotFoundException("No category found for age " + age + " and gender " + request.getGender()));
 
-        String nextBibNumber = generateNextBibNumber(raceId);
+        String nextBibNumber = generateNextBibNumber(raceEventId);
 
         Participant newParticipant = participantMapper.toEntity(request);
         newParticipant.setRaceEvent(raceEvent);
@@ -47,38 +53,44 @@ public class ParticipantService {
         return participantMapper.toResponse(savedParticipant);
     }
 
-    public List<ParticipantResponse> findAllByRaceId(Long raceId) {
-        if (!raceEventRepository.existsById(raceId)) {
-            throw new ResourceNotFoundException("Race not found for id: " + raceId);
+    @Cacheable(value = "participants", key = "#raceEventId")
+    public Page<ParticipantResponse> findAllByRaceId(Long raceEventId, Pageable pageable) {
+        if (!raceEventRepository.existsById(raceEventId)) {
+            throw new ResourceNotFoundException("Race event not found for ID: " + raceEventId);
         }
-        List<Participant> participants = participantRepository.findByRaceEventId(raceId);
-        return participantMapper.toResponse(participants);
+        Page<Participant> participants = participantRepository.findByRaceEventId(raceEventId, pageable);
+        return participants.map(participantMapper::toResponse);
     }
 
-    public ParticipantResponse findByRaceIdAndParticipantId(Long raceId, Long participantId) {
-        Participant participant = participantRepository.findById(participantId).orElseThrow(() -> new ResourceNotFoundException("Participant not found for id: " + participantId));
+    @Cacheable(value = "participants", key = "#raceEventId + '_' + #participantId")
+    public ParticipantResponse findByRaceIdAndParticipantId(Long raceEventId, Long participantId) {
+        Participant participant = participantRepository.findById(participantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Participant not found for ID: " + participantId));
 
-        if (!participant.getRaceEvent().getId().equals(raceId)) {
+        if (!participant.getRaceEvent().getId().equals(raceEventId)) {
             throw new ResourceNotFoundException("Participant does not belong to the specified race event.");
         }
 
         return participantMapper.toResponse(participant);
     }
 
-    public void delete(Long raceId, Long participantId) {
-        Participant participantToDelete = participantRepository.findById(participantId).orElseThrow(() -> new ResourceNotFoundException("Participant not found for id: " + participantId));
+    @CacheEvict(value = "participants", allEntries = true)
+    public void delete(Long raceEventId, Long participantId) {
+        Participant participantToDelete = participantRepository.findById(participantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Participant not found for ID: " + participantId));
 
-        if (!participantToDelete.getRaceEvent().getId().equals(raceId)) {
+        if (!participantToDelete.getRaceEvent().getId().equals(raceEventId)) {
             throw new ResourceNotFoundException("Participant does not belong to the specified race event.");
         }
 
         participantRepository.delete(participantToDelete);
     }
 
-    private String generateNextBibNumber(Long raceId) {
-        return participantRepository.findTopByRaceEventIdOrderByBibNumberDesc(raceId).map(lastParticipant -> {
-            int lastBib = Integer.parseInt(lastParticipant.getBibNumber());
-            return String.valueOf(lastBib + 1);
-        }).orElse("1");
+    private String generateNextBibNumber(Long raceEventId) {
+        return participantRepository.findTopByRaceEventIdOrderByBibNumberDesc(raceEventId)
+                .map(lastParticipant -> {
+                    int lastBib = Integer.parseInt(lastParticipant.getBibNumber());
+                    return String.valueOf(lastBib + 1);
+                }).orElse("1");
     }
 }

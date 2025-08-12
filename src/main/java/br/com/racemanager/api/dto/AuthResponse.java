@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryResponse {
-    private Long id;
-    private String name;
-    private Integer minAge;
-    private Integer maxAge;
-    private String gender;
-    private Long raceEventId;
+public class AuthResponse {
+    private String token;
+    private String type = "Bearer";
+    private String organizerName;
+    private String email;
 }
