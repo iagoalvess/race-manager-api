@@ -40,9 +40,6 @@ coverage: ## Generate coverage report
 swagger: ## Open Swagger documentation
 	@echo "Access: http://localhost:8080/api/v1/swagger-ui.html"
 
-health: ## Check application health
-	curl http://localhost:8080/api/v1/health
-
 db-reset: ## Reset database (careful!)
 	@echo "WARNING: This will delete all data!"
 	@read -p "Are you sure? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1

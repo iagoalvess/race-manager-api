@@ -2,11 +2,11 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:13
-    container_name: race-manager-db
+    image: postgres:16
+    container_name: racemanager
     environment:
-      POSTGRES_DB: race_manager_db
-      POSTGRES_USER: postgres
+      POSTGRES_DB: racemanager_db
+      POSTGRES_USER: admin
       POSTGRES_PASSWORD: 112233
     ports:
       - "5432:5432"
